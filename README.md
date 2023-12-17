@@ -75,3 +75,8 @@ _enjoy!_
 | -it        | --inline-template=true |
 | -st        | --standalone=true      |
 | -sk        | --sk=true              |
+
+
+# TODO: 
+
+- [ ] ngg g type shared/types/grettings "hi,bye,hi there" -> accept spaces
