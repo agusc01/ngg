@@ -1,22 +1,28 @@
-# First step
+# Settings for windows
 
-Open a gitbash (MINGW64) or terminal
+> note: for linux and mac you just have to change the main root
+
+## First step
+
+Open a gitbash (MINGW64)
 
 ```bash
 cd ~ && git clone https://github.com/agusc01/ngg
 ```
 
-# Second step
+## Second step
 
 ```bash
 add_ngg="if [ -f ~/ngg/script.sh ]; then
   . ~/ngg/script.sh
 fi"
 
-echo "$add_ngg" >> .bashrc
+echo "$add_ngg" >> ~/.bashrc
+
+source ~/.bashrc
 ```
 
-# Third step
+## Third step
 
 _enjoy!_
 
@@ -28,23 +34,23 @@ _enjoy!_
 
 | argument=$1   | argument=$2        | argument=$3     | argument=$4                              | default flags                                                                                    | type   | flags alias                    |
 | ------------- | ------------------ | --------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------ | ------ | ------------------------------ |
-| g \| generate | cl \| class        | [name : string] |                                          | --type=class                                                                                     | native |                                |
-| g \| generate | c \| component     | [name : string] | **--prefix=$4**                          |                                                                                                  | native | -e \| -is \| -it \| -st \| -sk |
-| g \| generate | P \| page          | [name : string] | **--prefix=$4**                          | --type=page                                                                                      | native | -e \| -is \| -it \| -st \| -sk |
-| g \| generate | d \| directive     | [name : string] | **--prefix=$4**                          |                                                                                                  | native | -e \| -st \| -sk               |
-| g \| generate | e \| enum          | [name : string] |                                          | --type=enum                                                                                      | native |                                |
-| g \| generate | en \| environments | [name : string] |                                          |                                                                                                  | native |                                |
-| g \| generate | g \| guard         | [name : string] |                                          | --functional=true                                                                                | native | -sk                            |
-| g \| generate | in \| interceptor  | [name : string] |                                          | --functional=true                                                                                | native | -sk                            |
-| g \| generate | i \| interface     | [name : string] |                                          | --type=interface                                                                                 | native |                                |
-| g \| generate | t \| type          | [name : string] | **implements=n1,n2,...,nn [n : string]** | --type=type                                                                                      | fake   |                                |
-| g \| generate | m \| module        | [name : string] |                                          |                                                                                                  | native |                                |
-| g \| generate | mr \| moduleroute  | [name : string] | **--module=$4**                          | --routing=true                                                                                   | native |                                |
-| g \| generate | p \| pipe          | [name : string] |                                          |                                                                                                  | native | -e \| -st \| -sk               |
-| g \| generate | r \| resolver      | [name : string] |                                          | --functional=true                                                                                | native | -sk                            |
-| g \| generate | s \| service       | [name : string] |                                          |                                                                                                  | native | -sk                            |
-| s \| serve    | **--port=$2**      |                 |                                          | --open                                                                                           | native |                                |
-| n \| new      |                    |                 |                                          | --skipt-test=true <br> --style=scss <br> --standalone=false <br> --routing=true <br> --ssr=false | native |                                |
+| g <br> generate | cl <br> class        | [name : string] |                                          | --type=class                                                                                     | native |                                |
+| g <br> generate | c <br> component     | [name : string] | **--prefix=$4**                          |                                                                                                  | native | -e <br> -is <br> -it <br> -st <br> -sk |
+| g <br> generate | P <br> page          | [name : string] | **--prefix=$4**                          | --type=page                                                                                      | native | -e <br> -is <br> -it <br> -st <br> -sk |
+| g <br> generate | d <br> directive     | [name : string] | **--prefix=$4**                          |                                                                                                  | native | -e <br> -st <br> -sk               |
+| g <br> generate | e <br> enum          | [name : string] |                                          | --type=enum                                                                                      | native |                                |
+| g <br> generate | en <br> environments | [name : string] |                                          |                                                                                                  | native |                                |
+| g <br> generate | g <br> guard         | [name : string] |                                          | --functional=true                                                                                | native | -sk                            |
+| g <br> generate | in <br> interceptor  | [name : string] |                                          | --functional=true                                                                                | native | -sk                            |
+| g <br> generate | i <br> interface     | [name : string] |                                          | --type=interface                                                                                 | native |                                |
+| g <br> generate | t <br> type          | [name : string] | **implements=n1,n2,...,nn [n : string]** | --type=type                                                                                      | fake   |                                |
+| g <br> generate | m <br> module        | [name : string] |                                          |                                                                                                  | native |                                |
+| g <br> generate | mr <br> moduleroute  | [name : string] | **--module=$4**                          | --routing=true                                                                                   | native |                                |
+| g <br> generate | p <br> pipe          | [name : string] |                                          |                                                                                                  | native | -e <br> -st <br> -sk               |
+| g <br> generate | r <br> resolver      | [name : string] |                                          | --functional=true                                                                                | native | -sk                            |
+| g <br> generate | s <br> service       | [name : string] |                                          |                                                                                                  | native | -sk                            |
+| s <br> serve    | **--port=$2**      |                 |                                          | --open                                                                                           | native |                                |
+| n <br> new      |                    |                 |                                          | --skipt-test=true <br> --style=scss <br> --standalone=false <br> --routing=true <br> --ssr=false | native |                                |
 
 <br>
 <br>
