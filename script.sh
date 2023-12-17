@@ -63,7 +63,7 @@ ngg() {
 				;;
 
 			m|module)
-				command="ng generate module $path_name $flags $default_flags"
+				command="ng generate module $path_name --module=${prefix:-$default_prefix} $flags $default_flags"
 				;;
 
 			mr|moduleroute)
