@@ -120,49 +120,49 @@ get_flags() {
 	local element="$2"
 	flags=""
 	while [[ "$#" -gt 0 ]]; do
-    		case $1 in
-          -*=*|--*=*)
-            flag="${1%%=*}"
-            value="${1#*=}"
-            flags+="$flag=$value "
-            flag=""
-            value=""
-            ;;
-				-e)
-					case $element in
-						c|component|P|page|d|directive|p|pipe)
-							flags+="--export=true "
-							;;
-					esac
+		case $1 in
+			-*=*|--*=*)
+				flag="${1%%=*}"
+				value="${1#*=}"
+				flags+="$flag=$value "
+				flag=""
+				value=""
+				;;
+		-e)
+			case $element in
+				c|component|P|page|d|directive|p|pipe)
+					flags+="--export=true "
 					;;
-				-is)
-					case $element in
-						c|component|P|page|app|application)
-							flags+="--inline-style=true "
-							;;	
-					esac
-					;;
-				-it)
-					case $element in
-						c|component|P|page|app|application)
-							flags+="--inline-template=true "
-							;;	
-					esac
-					;;
-				-st)
-					case $element in
-						app|application|c|component|P|page|d|directive|p|pipe)
-							flags+="--standalone=true "
-							;;	
-					esac
-					;;
-				-sk)
-					case $element in
-						app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service)
-							flags+="--skip-tests=true "
-							;;	
-					esac
-					;;
+			esac
+			;;
+		-is)
+			case $element in
+				c|component|P|page|app|application)
+					flags+="--inline-style=true "
+					;;	
+			esac
+			;;
+		-it)
+			case $element in
+				c|component|P|page|app|application)
+					flags+="--inline-template=true "
+					;;	
+			esac
+			;;
+		-st)
+			case $element in
+				app|application|c|component|P|page|d|directive|p|pipe)
+					flags+="--standalone=true "
+					;;	
+			esac
+			;;
+		-sk)
+			case $element in
+				app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service)
+					flags+="--skip-tests=true "
+					;;	
+			esac
+			;;
 		esac
 
 		shift
