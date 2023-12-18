@@ -75,3 +75,45 @@ _enjoy!_
 | -it        | --inline-template=true |
 | -st        | --standalone=true      |
 | -sk        | --sk=true              |
+
+<br>
+<br>
+<br>
+
+### Examples
+
+```bash
+ngg new ng-testing-ngg
+
+ngg g mr modules/products
+
+ngg g mr modules/articles modules/products
+
+ngg g cl modules/products/classes/product
+
+ngg g c modules/products/components/listProducts product -is -it -sk
+
+ngg g page modules/products/pages/home product
+
+ngg g m shared app
+
+ngg g d shared/directives/text shared -e -sk
+
+ngg g e shared/enums/data
+
+ngg g en
+
+ngg g g guards/isAdmin -sk
+
+ngg g in interceptors/body
+
+ngg g t shared/types/customType
+
+ngg g t shared/types/grettings "hi,bye,hi there"
+
+ngg g p shared/pipes/dni -e
+
+ngg g r resolvers/data -sk
+
+ngg g s services/user -sk
+```
