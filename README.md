@@ -32,25 +32,25 @@ _enjoy!_
 
 ## Documentation (?)
 
-| arg=$1          | arg=$2               | arg=$3 | arg=$4                                   | default <br> flags                                                                               | type   | flags <br> alias                       |
-| --------------- | -------------------- | ------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------ | ------ | -------------------------------------- |
-| g <br> generate | cl <br> class        | [name] |                                          | --type=class                                                                                     | native |                                        |
-| g <br> generate | c <br> component     | [name] | **--prefix=$4**                          |                                                                                                  | native | -e <br> -is <br> -it <br> -st <br> -sk |
-| g <br> generate | P <br> page          | [name] | **--prefix=$4**                          | --type=page                                                                                      | native | -e <br> -is <br> -it <br> -st <br> -sk |
-| g <br> generate | d <br> directive     | [name] | **--prefix=$4**                          |                                                                                                  | native | -e <br> -st <br> -sk                   |
-| g <br> generate | e <br> enum          | [name] |                                          | --type=enum                                                                                      | native |                                        |
-| g <br> generate | en <br> environments | [name] |                                          |                                                                                                  | native |                                        |
-| g <br> generate | g <br> guard         | [name] |                                          | --functional=true                                                                                | native | -sk                                    |
-| g <br> generate | in <br> interceptor  | [name] |                                          | --functional=true                                                                                | native | -sk                                    |
-| g <br> generate | i <br> interface     | [name] |                                          | --type=interface                                                                                 | native |                                        |
-| g <br> generate | t <br> type          | [name] | **implements=n1,n2,...,nn [n : string]** | --type=type                                                                                      | fake   |                                        |
-| g <br> generate | m <br> module        | [name] |                                          |                                                                                                  | native |                                        |
-| g <br> generate | mr <br> moduleroute  | [name] | **--module=$4**                          | --routing=true                                                                                   | native |                                        |
-| g <br> generate | p <br> pipe          | [name] |                                          |                                                                                                  | native | -e <br> -st <br> -sk                   |
-| g <br> generate | r <br> resolver      | [name] |                                          | --functional=true                                                                                | native | -sk                                    |
-| g <br> generate | s <br> service       | [name] |                                          |                                                                                                  | native | -sk                                    |
-| s <br> serve    | **--port=$2**        |        |                                          | --open                                                                                           | native |                                        |
-| n <br> new      |                      |        |                                          | --skipt-test=true <br> --style=scss <br> --standalone=false <br> --routing=true <br> --ssr=false | native |                                        |
+| arg=$1          | arg=$2               | arg=$3 | arg=$4                                   | default <br> flags                                | type   | flags <br> alias                                                                   |
+| --------------- | -------------------- | ------ | ---------------------------------------- | ------------------------------------------------- | ------ | ---------------------------------------------------------------------------------- |
+| g <br> generate | cl <br> class        | [name] |                                          | --type=class                                      | native |                                                                                    |
+| g <br> generate | c <br> component     | [name] | **--prefix=$4**                          |                                                   | native | -e <br> -is <br> -it <br> -st <br> -sk <br> -e <br> -is <br> -it <br> -st <br> -sk |
+| g <br> generate | P <br> page          | [name] | **--prefix=$4**                          | --type=page                                       | native | -e <br> -is <br> -it <br> -st <br> -sk <br> -e <br> -is <br> -it <br> -st <br> -sk |
+| g <br> generate | d <br> directive     | [name] | **--prefix=$4**                          |                                                   | native | -e <br> -st <br> -sk <br> -e0 <br> -st0 <br> -sk0                                  |
+| g <br> generate | e <br> enum          | [name] |                                          | --type=enum                                       | native |                                                                                    |
+| g <br> generate | en <br> environments | [name] |                                          |                                                   | native |                                                                                    |
+| g <br> generate | g <br> guard         | [name] |                                          | --functional=true                                 | native | -sk <br> -sk0                                                                      |
+| g <br> generate | in <br> interceptor  | [name] |                                          | --functional=true                                 | native | -sk <br> -sk0                                                                      |
+| g <br> generate | i <br> interface     | [name] |                                          | --type=interface                                  | native |                                                                                    |
+| g <br> generate | t <br> type          | [name] | **implements=n1,n2,...,nn [n : string]** | --type=type                                       | fake   |                                                                                    |
+| g <br> generate | m <br> module        | [name] |                                          |                                                   | native |                                                                                    |
+| g <br> generate | mr <br> moduleroute  | [name] | **--module=$4**                          | --routing=true                                    | native |                                                                                    |
+| g <br> generate | p <br> pipe          | [name] |                                          |                                                   | native | -e <br> -st <br> -sk <br> -e0 <br> -st0 <br> -sk0                                  |
+| g <br> generate | r <br> resolver      | [name] |                                          | --functional=true                                 | native | -sk <br> -sk0                                                                      |
+| g <br> generate | s <br> service       | [name] |                                          |                                                   | native | -sk <br> -sk0                                                                      |
+| s <br> serve    | **--port=$2**        |        |                                          | --open                                            | native |                                                                                    |
+| n <br> new      | [name]               |        |                                          | --style=scss <br> --routing=true <br> --ssr=false | native | -is <br> -it <br> -st <br> -sk <br> -is0 <br> -it0 <br> -st0 <br> -sk0             |
 
 > [name] is a string
 
@@ -70,13 +70,18 @@ _enjoy!_
 <br>
 <br>
 
-| flag alias | angular flag           |
-| ---------- | ---------------------- |
-| -e         | --export=true          |
-| -is        | --inline-style=true    |
-| -it        | --inline-template=true |
-| -st        | --standalone=true      |
-| -sk        | --sk=true              |
+| flag alias | angular flag            |
+| ---------- | ----------------------- |
+| -e         | --export=true           |
+| -is        | --inline-style=true     |
+| -it        | --inline-template=true  |
+| -st        | --standalone=true       |
+| -sk        | --sk=true               |
+| -e0        | --export=false          |
+| -is0       | --inline-style=false    |
+| -it0       | --inline-template=false |
+| -st0       | --standalone=false      |
+| -sk0       | --sk=false              |
 
 <br>
 <br>
@@ -85,7 +90,7 @@ _enjoy!_
 ### Examples
 
 ```bash
-ngg new ng-testing-ngg
+ngg new ng-testing-ngg -sk -st0
 
 ngg g mr modules/products
 

@@ -95,7 +95,7 @@ ngg() {
 			;;
 
 		n|new)
-			default_flags=" --skip-tests=true --style=scss --standalone=false --routing=true --ssr=false"
+			default_flags=" --style=scss --routing=true --ssr=false"
 			command="ng $@ $flags $default_flags"
 			;;
 
@@ -135,10 +135,24 @@ get_flags() {
 					;;
 			esac
 			;;
+		-e0)
+			case $element in
+				c|component|P|page|d|directive|p|pipe)
+					flags+="--export=false "
+					;;
+			esac
+			;;
 		-is)
 			case $element in
 				c|component|P|page|app|application)
 					flags+="--inline-style=true "
+					;;	
+			esac
+			;;
+		-is0)
+			case $element in
+				c|component|P|page|app|application)
+					flags+="--inline-style=false "
 					;;	
 			esac
 			;;
@@ -149,6 +163,13 @@ get_flags() {
 					;;	
 			esac
 			;;
+		-it0)
+			case $element in
+				c|component|P|page|app|application)
+					flags+="--inline-template=false "
+					;;	
+			esac
+			;;
 		-st)
 			case $element in
 				app|application|c|component|P|page|d|directive|p|pipe)
@@ -156,10 +177,24 @@ get_flags() {
 					;;	
 			esac
 			;;
+		-st0)
+			case $element in
+				app|application|c|component|P|page|d|directive|p|pipe)
+					flags+="--standalone=false "
+					;;	
+			esac
+			;;
 		-sk)
 			case $element in
 				app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service)
 					flags+="--skip-tests=true "
+					;;	
+			esac
+			;;
+		-sk0)
+			case $element in
+				app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service)
+					flags+="--skip-tests=false "
 					;;	
 			esac
 			;;
