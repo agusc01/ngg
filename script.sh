@@ -190,7 +190,7 @@ create_type() {
 	
 		# check if the fourth parameters is present
 		if [ ! -z "$4" ]; then
-			implements=$(format_string_types $4)
+			implements=$(format_string_types "$4")
   	fi
 	
 		mkdir -p "$path"
