@@ -62,6 +62,12 @@ ngg() {
 				return 0;
 				;;
 
+			co|const)
+				default_flags="--type=const "
+				create_const "$@"
+				return 0;
+				;;
+
 			m|module)
 				command="ng generate module $path_name --module=${prefix:-$default_prefix} $flags $default_flags"
 				;;
@@ -221,11 +227,11 @@ create_type() {
  
 		path=$(dirname "$path_file")
 		file=$(basename "$path_file")
-		name=$(to_upper_first_leter_case $file)
+		name=$(camel_to_snake $file)
 	
 		# check if the fourth parameters is present
 		if [ ! -z "$4" ]; then
-			implements=$(format_string_types "$4")
+			implements=$(format_string_type "$4")
   	fi
 	
 		mkdir -p "$path"
@@ -245,6 +251,48 @@ create_type() {
 	fi
 }
 
+create_const() {
+	local extension=".const.ts"
+	local root="src/app/"
+	local path_file="$root$3"
+	local path=""
+	local file=""
+	local name=""
+	local kebab_path=$(camel_to_kebab "$path_file$extension")
+	local implements=""
+
+	# if already exists the file
+	if [ -e "$kebab_path" ]; then
+		echo -e "\n\e[1mNothing to be done\e[0m"
+	else
+ 
+		path=$(dirname "$path_file")
+		file=$(basename "$path_file")
+		name=$(camel_to_snake $file)
+	
+		# check if the fourth parameters is present
+		if [ ! -z "$4" ]; then
+			implements=$(format_string_const "$4")
+  	fi
+	
+		mkdir -p "$path"
+		echo "export type $name = ${implements:-''};" > "$kebab_path"
+	
+  	size=$(stat -c %s $kebab_path)
+		command="fake:ng generate const $3 $flags $default_flags --implements=${implements:-''}"
+	
+		echo -e '\e[1;36m' # Cyan
+		echo "[command]"
+		echo -e '\e[1;33m' # Yellow
+		echo -e "\t$command"
+		echo -e '\e[1;37m' # White
+		
+		echo -e "\e[1;32mCREATE\e[0m \e[1m$kebab_path ($size bytes)\e[0m"
+
+	fi
+}
+
+
 camel_to_kebab() {
 	echo "$1" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1-\2/g' | tr '[:upper:]' '[:lower:]'
 }
@@ -253,9 +301,71 @@ to_upper_first_leter_case() {
 	echo "$1" | sed 's/./\U&/'
 }
 
-format_string_types() {
-	echo "$1" | awk -F',' '{for(i=1;i<=NF;i++) {printf("\x27%s\x27 | ", $i)}}' | sed 's/ | $//'
+format_string_type() {
+    echo "$1" | awk -F',' '{
+        for(i=1;i<=NF;i++) {
+            value = $i;
+
+            # Verificar si el valor es un número (entero o flotante)
+            if (value ~ /^[+-]?([0-9]*[.])?[0-9]+$/) {
+                printf("%s | ", value);
+            } else {
+                printf("\x27%s\x27 | ", value);
+            }
+        }
+    }' | sed 's/ | $//'
 }
+
+# format_string_type() {
+# 	echo "$1" | awk -F',' '{for(i=1;i<=NF;i++) {printf("\x27%s\x27 | ", $i)}}' | sed 's/ | $//'
+# }
+
+camel_to_snake() {
+	echo "$1" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1_\2/g' | tr '[:lower:]' '[:upper:]'
+}
+
+
+format_string_const() {
+	local result=$(echo "$1" | sed -E 's/([a-z])([A-Z])/\1_\L\2/g;')
+
+	result=$(echo "$result" | awk -F',' '{
+		for(i=1; i<=NF; i++) {
+			split($i, partes, ":");
+			key = toupper(partes[1]);
+			value = partes[2];
+			
+			# Verificar si el valor es un número
+			if (value ~ /^[+-]?([0-9]*[.])?[0-9]+$/) {
+				printf "\t%s: %s%s\n", key, value, (i==NF)?"":", ";
+			} else {
+					printf "\t%s: \x27%s\x27%s\n", key, value, (i==NF)?"":", ";
+			}
+		}
+		print "";
+	}')
+
+	echo -e "{\n$result\n}"
+}
+
+msg_fake_command() {
+		echo -e '\e[1;36m' # Cyan
+		echo "[command]"
+		echo -e '\e[1;33m' # Yellow
+		echo -e "\t$1"
+		echo -e '\e[1;37m' # White
+		echo -e "\e[1;32mCREATE\e[0m \e[1m$2 ($3 bytes)\e[0m"
+}
+
+# format_string_const() {
+
+# 	# From CamelCase to SnakeUpperCase
+# 	local result=$(echo "$1" | sed -E 's/([a-z])([A-Z])/\1_\L\2/g;')
+
+# 	# Format with awk
+# 	result=$(echo "$result" | awk -F',' '{for(i=1; i<=NF; i++) {split($i, partes, ":"); printf "\t%s: \x27%s\x27%s\n",toupper(partes[1]), partes[2], (i==NF)?"":", "}; print ""}')
+
+# 	echo -e "{\n$result\n}"
+# }
 
 # to_lower_case() {
 #	echo "$1" | sed -r 's/(^|_)([A-Z])/\L\2/g; s/(^|-)([A-Z])/\L\2/g; s/([A-Z])/\L\1/g;'
