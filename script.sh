@@ -292,9 +292,12 @@ create_const() {
 	fi
 }
 
-
 camel_to_kebab() {
 	echo "$1" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1-\2/g' | tr '[:upper:]' '[:lower:]'
+}
+
+camel_to_snake() {
+	echo "$1" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1_\2/g' | tr '[:lower:]' '[:upper:]'
 }
 
 to_upper_first_leter_case() {
@@ -315,15 +318,6 @@ format_string_type() {
         }
     }' | sed 's/ | $//'
 }
-
-# format_string_type() {
-# 	echo "$1" | awk -F',' '{for(i=1;i<=NF;i++) {printf("\x27%s\x27 | ", $i)}}' | sed 's/ | $//'
-# }
-
-camel_to_snake() {
-	echo "$1" | sed 's/\([a-z0-9]\)\([A-Z]\)/\1_\2/g' | tr '[:lower:]' '[:upper:]'
-}
-
 
 format_string_const() {
 	local result=$(echo "$1" | sed -E 's/([a-z])([A-Z])/\1_\L\2/g;')
@@ -355,18 +349,3 @@ msg_fake_command() {
 		echo -e '\e[1;37m' # White
 		echo -e "\e[1;32mCREATE\e[0m \e[1m$2 ($3 bytes)\e[0m"
 }
-
-# format_string_const() {
-
-# 	# From CamelCase to SnakeUpperCase
-# 	local result=$(echo "$1" | sed -E 's/([a-z])([A-Z])/\1_\L\2/g;')
-
-# 	# Format with awk
-# 	result=$(echo "$result" | awk -F',' '{for(i=1; i<=NF; i++) {split($i, partes, ":"); printf "\t%s: \x27%s\x27%s\n",toupper(partes[1]), partes[2], (i==NF)?"":", "}; print ""}')
-
-# 	echo -e "{\n$result\n}"
-# }
-
-# to_lower_case() {
-#	echo "$1" | sed -r 's/(^|_)([A-Z])/\L\2/g; s/(^|-)([A-Z])/\L\2/g; s/([A-Z])/\L\1/g;'
-# }
