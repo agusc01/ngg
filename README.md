@@ -90,7 +90,7 @@ _enjoy!_
 ### Examples
 
 ```bash
-ngg new ng-testing-ngg -sk -st0
+ngg n testing -sk -st0 -is0 -it0
 
 ngg g mr modules/products
 

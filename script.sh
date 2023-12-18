@@ -1,10 +1,13 @@
 ngg() {
 	local path_name="$3"
-	local prefix="$4"
-	local default_prefix="app"
+	local prefix="app"
 	local command=""
 	local default_flags=""
 	local port="4141"
+
+	if [[ $4 != -* && $4 != -* ]]; then
+		prefix="$4"
+	fi
 
 	get_flags "$@"
 
@@ -20,16 +23,16 @@ ngg() {
 				;;
 
 			c|component)
-				command="ng generate component $path_name --prefix=${prefix:-$default_prefix} $flags $default_flags "
+				command="ng generate component $path_name --prefix=$prefix $flags $default_flags "
 				;;
 
 			P|page)
 				default_flags="--type=page "
-				command="ng generate component $path_name --prefix=${prefix:-$default_prefix} $flags $default_flags "
+				command="ng generate component $path_name --prefix=$prefix $flags $default_flags "
 				;;
 
 			d|directive)
-				command="ng generate directive $path_name --prefix=${prefix:-$default_prefix} $flags $default_flags"
+				command="ng generate directive $path_name --prefix=$prefix $flags $default_flags"
 				;;
 
 			e|num)
@@ -69,12 +72,12 @@ ngg() {
 				;;
 
 			m|module)
-				command="ng generate module $path_name --module=${prefix:-$default_prefix} $flags $default_flags"
+				command="ng generate module $path_name --module=$prefix $flags $default_flags"
 				;;
 
 			mr|moduleroute)
 				default_flags="--routing=true"
-				command="ng generate module $path_name --module=${prefix:-$default_prefix} $flags $default_flags"
+				command="ng generate module $path_name --module=$prefix $flags $default_flags"
 				;;
 
 			p|pipe)
@@ -101,8 +104,8 @@ ngg() {
 			;;
 
 		n|new)
-			default_flags=" --style=scss --routing=true --ssr=false"
-			command="ng $@ $flags $default_flags"
+			default_flags="--style=scss --routing=true --ssr=false"
+			command="ng new $2 $flags $default_flags"
 			;;
 
 		*)
@@ -123,7 +126,14 @@ ngg() {
 get_flags() {
 	local flag=""
 	local	value=""
-	local element="$2"
+	local element="";
+
+	if [[ "$1" == "new" || "$1" == "n" ]]; then
+		element="$1"
+	else
+		element="$2"
+	fi
+
 	flags=""
 	while [[ "$#" -gt 0 ]]; do
 		case $1 in
@@ -134,76 +144,76 @@ get_flags() {
 				flag=""
 				value=""
 				;;
-		-e)
-			case $element in
-				c|component|P|page|d|directive|p|pipe)
-					flags+="--export=true "
+				-e)
+					case $element in
+						c|component|P|page|d|directive|p|pipe)
+							flags+="--export=true "
+							;;
+					esac
 					;;
-			esac
-			;;
-		-e0)
-			case $element in
-				c|component|P|page|d|directive|p|pipe)
-					flags+="--export=false "
+				-e0)
+					case $element in
+						c|component|P|page|d|directive|p|pipe)
+							flags+="--export=false "
+							;;
+					esac
 					;;
-			esac
-			;;
-		-is)
-			case $element in
-				c|component|P|page|app|application)
-					flags+="--inline-style=true "
-					;;	
-			esac
-			;;
-		-is0)
-			case $element in
-				c|component|P|page|app|application)
-					flags+="--inline-style=false "
-					;;	
-			esac
-			;;
-		-it)
-			case $element in
-				c|component|P|page|app|application)
-					flags+="--inline-template=true "
-					;;	
-			esac
-			;;
-		-it0)
-			case $element in
-				c|component|P|page|app|application)
-					flags+="--inline-template=false "
-					;;	
-			esac
-			;;
-		-st)
-			case $element in
-				app|application|c|component|P|page|d|directive|p|pipe)
-					flags+="--standalone=true "
-					;;	
-			esac
-			;;
-		-st0)
-			case $element in
-				app|application|c|component|P|page|d|directive|p|pipe)
-					flags+="--standalone=false "
-					;;	
-			esac
-			;;
-		-sk)
-			case $element in
-				app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service)
-					flags+="--skip-tests=true "
-					;;	
-			esac
-			;;
-		-sk0)
-			case $element in
-				app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service)
-					flags+="--skip-tests=false "
-					;;	
-			esac
-			;;
+				-is)
+					case $element in
+						c|component|P|page|app|application|n|new)
+							flags+="--inline-style=true "
+							;;	
+					esac
+					;;
+				-is0)
+					case $element in
+						c|component|P|page|app|application|n|new)
+							flags+="--inline-style=false "
+							;;	
+					esac
+					;;
+				-it)
+					case $element in
+						c|component|P|page|app|application|n|new)
+							flags+="--inline-template=true "
+							;;	
+					esac
+					;;
+				-it0)
+					case $element in
+						c|component|P|page|app|application|n|new)
+							flags+="--inline-template=false "
+							;;	
+					esac
+					;;
+				-st)
+					case $element in
+						app|application|c|component|P|page|d|directive|p|pipe|n|new)
+							flags+="--standalone=true "
+							;;	
+					esac
+					;;
+				-st0)
+					case $element in
+						app|application|c|component|P|page|d|directive|p|pipe|n|new)
+							flags+="--standalone=false "
+							;;	
+					esac
+					;;
+				-sk)
+					case $element in
+						app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service|n|new)
+							flags+="--skip-tests=true "
+							;;	
+					esac
+					;;
+				-sk0)
+					case $element in
+						app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service|n|new)
+							flags+="--skip-tests=false "
+							;;	
+					esac
+					;;
 		esac
 
 		shift
