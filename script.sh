@@ -7,6 +7,16 @@ ngg() {
 
 	if [[ ! -z "$4" && "$4" != -* && "$4" != -* ]]; then
 		prefix="$4"
+	else
+		case "$2" in
+			cl|class|c|component|P|page)
+				if [[ $path_name == shared* ]]; then
+					prefix="shared"
+				elif [[ $path_name =~ ^modules/([^/]+) ]]; then
+					prefix="${BASH_REMATCH[1]}"
+				fi
+			;;
+		esac
 	fi
 
 	get_flags "$@"
@@ -22,7 +32,7 @@ ngg() {
 				command="ng generate class $(create_path $path_name "classes") $flags $default_flags"
 				;;
 
-			c|component)
+			c|component)				
 				command="ng generate component $(create_path $path_name "components") --prefix=$prefix $flags $default_flags"
 				;;
 
