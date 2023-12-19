@@ -5,7 +5,7 @@ ngg() {
 	local default_flags=""
 	local port="4141"
 
-	if [[ $4 != -* && $4 != -* ]]; then
+	if [[ ! -z "$4" && "$4" != -* && "$4" != -* ]]; then
 		prefix="$4"
 	fi
 
@@ -18,26 +18,26 @@ ngg() {
 	  	case "$2" in
 
 			cl|class)
-				default_flags="--type=class "
-				command="ng generate class $path_name $flags $default_flags"
+				default_flags="--type=class"
+				command="ng generate class $(create_path $path_name "classes") $flags $default_flags"
 				;;
 
 			c|component)
-				command="ng generate component $path_name --prefix=$prefix $flags $default_flags "
+				command="ng generate component $(create_path $path_name "components") --prefix=$prefix $flags $default_flags"
 				;;
 
 			P|page)
-				default_flags="--type=page "
-				command="ng generate component $path_name --prefix=$prefix $flags $default_flags "
+				default_flags="--type=page"
+				command="ng generate component $(create_path $path_name "pages") --prefix=$prefix $flags $default_flags"
 				;;
 
 			d|directive)
-				command="ng generate directive $path_name --prefix=$prefix $flags $default_flags"
+				command="ng generate directive $(create_path $path_name "directives") --prefix=$prefix $flags $default_flags"
 				;;
 
 			e|num)
-				default_flags="--type=enum "
-				command="ng generate enum $path_name $flags $default_flags"
+				default_flags="--type=enum"
+				command="ng generate enum $(create_path $path_name "enums") $flags $default_flags"
 				;;
 
 			en|environments)
@@ -45,28 +45,28 @@ ngg() {
 				;;
 
 			g|guard)
-				default_flags="--functional=true "
-				command="ng generate guard $path_name $flags $default_flags"			
+				default_flags="--functional=true"
+				command="ng generate guard $(create_path $path_name "guards") $flags $default_flags"			
 				;;
 
 			in|interceptor)
-				default_flags="--functional=true "
-				command="ng generate interceptor $path_name $flags $default_flags"			
+				default_flags="--functional=true"
+				command="ng generate interceptor $(create_path $path_name "interceptors") $flags $default_flags"			
 				;;
 
 			i|interface)
-				default_flags="--type=interface "
-				command="ng generate interface $path_name $flags $default_flags"
+				default_flags="--type=interface"
+				command="ng generate interface $(create_path $path_name "interfaces") $flags $default_flags"
 				;;
 
 			t|type)
-				default_flags="--type=type "
+				default_flags="--type=type"
 				create_type "$@"
 				return 0;
 				;;
 
 			co|const)
-				default_flags="--type=const "
+				default_flags="--type=const"
 				create_const "$@"
 				return 0;
 				;;
@@ -81,16 +81,16 @@ ngg() {
 				;;
 
 			p|pipe)
-				command="ng generate pipe $path_name $flags $default_flags"
+				command="ng generate pipe $(create_path $path_name "pipes") $flags $default_flags"
 				;;
 
 			r|resolver)
-				default_flags="--functional=true "
-				command="ng generate resolver $path_name $flags $default_flags"
+				default_flags="--functional=true"
+				command="ng generate resolver $(create_path $path_name "resolvers") $flags $default_flags"
 				;;
 
 			s|service)
-				command="ng generate service $path_name $flags $default_flags"
+				command="ng generate service $(create_path $path_name "services") $flags $default_flags"
 				;;
 
 			*)
@@ -224,10 +224,10 @@ create_type() {
 	local extension=".type.ts"
 	local root="src/app/"
 	local path_file="$root$3"
-	local path=""
-	local file=""
-	local name=""
-	local kebab_path=$(camel_to_kebab "$path_file$extension")
+	local path="$(dirname "$path_file")/types"
+	local file=$(basename "$path_file")
+	local name=$file
+	local kebab_path="$(camel_to_kebab "$path/$file")$extension"
 	local implements=""
 
 	# if already exists the file
@@ -235,10 +235,6 @@ create_type() {
 		echo -e "\n\e[1mNothing to be done\e[0m"
 	else
  
-		path=$(dirname "$path_file")
-		file=$(basename "$path_file")
-		name=$(camel_to_snake $file)
-	
 		# check if the fourth parameters is present
 		if [ ! -z "$4" ]; then
 			implements=$(format_string_type "$4")
@@ -248,7 +244,7 @@ create_type() {
 		echo "export type $name = ${implements:-''};" > "$kebab_path"
 	
   	size=$(stat -c %s $kebab_path)
-		command="fake:ng generate type $3 $flags $default_flags --implements=${implements:-''}"
+		command="fake:ng generate type $(dirname $3)/types/$file $flags $default_flags --implements=${implements:-''}"
 	
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
@@ -265,20 +261,16 @@ create_const() {
 	local extension=".const.ts"
 	local root="src/app/"
 	local path_file="$root$3"
-	local path=""
-	local file=""
-	local name=""
-	local kebab_path=$(camel_to_kebab "$path_file$extension")
+	local path="$(dirname "$path_file")/constants"
+	local file=$(basename "$path_file")
+	local name=$(camel_to_snake $file)
+	local kebab_path="$(camel_to_kebab "$path/$file")$extension"
 	local implements=""
 
 	# if already exists the file
 	if [ -e "$kebab_path" ]; then
 		echo -e "\n\e[1mNothing to be done\e[0m"
 	else
- 
-		path=$(dirname "$path_file")
-		file=$(basename "$path_file")
-		name=$(camel_to_snake $file)
 	
 		# check if the fourth parameters is present
 		if [ ! -z "$4" ]; then
@@ -286,10 +278,11 @@ create_const() {
   	fi
 	
 		mkdir -p "$path"
-		echo "export type $name = ${implements:-''};" > "$kebab_path"
+		echo "export const $name = ${implements:-''};" > "$kebab_path"
 	
   	size=$(stat -c %s $kebab_path)
-		command="fake:ng generate const $3 $flags $default_flags --implements=${implements:-''}"
+		command="fake:ng generate const $(dirname $3)/types/$file $flags $default_flags --implements=${implements:-''}"
+
 	
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
@@ -358,4 +351,10 @@ msg_fake_command() {
 		echo -e "\t$1"
 		echo -e '\e[1;37m' # White
 		echo -e "\e[1;32mCREATE\e[0m \e[1m$2 ($3 bytes)\e[0m"
+}
+
+create_path() {
+	path=$(dirname "$1")
+	file=$(basename "$1")
+	echo "$path/$2/$file"
 }
