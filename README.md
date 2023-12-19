@@ -28,7 +28,7 @@ _enjoy!_
 
 ## Documentation (?)
 
-| arg=$1          | arg=$2               | arg=$3 | arg=$4                                                                   | default <br> flags                                | type   | flags <br> alias                                                                   |
+| arg=$1          | arg=$2               | arg=$3 | arg=$4                                                                   | default **STATIC** <br> flags                     | type   | flags <br> alias                                                                   |
 | --------------- | -------------------- | ------ | ------------------------------------------------------------------------ | ------------------------------------------------- | ------ | ---------------------------------------------------------------------------------- |
 | g <br> generate | cl <br> class        | [name] |                                                                          | --type=class                                      | native |                                                                                    |
 | g <br> generate | c <br> component     | [name] | **--prefix=$4**                                                          |                                                   | native | -e <br> -is <br> -it <br> -st <br> -sk <br> -e <br> -is <br> -it <br> -st <br> -sk |
@@ -55,13 +55,13 @@ _enjoy!_
 <br>
 <br>
 
-| where                | flag     | default value                              |
-| -------------------- | -------- | ------------------------------------------ |
-| generate component   | --prefix | root:app , shared:shared & modules:$module |
-| generate page        | --prefix | root:app , shared:shared & modules:$module |
-| generate directive   | --prefix | root:app , shared:shared & modules:$module |
-| generate moduleroute | --module | app                                        |
-| serve                | --port   | 4141                                       |
+| where                | flag     | default **STATIC** value |
+| -------------------- | -------- | ------------------------ |
+| generate component   | --prefix | app                      |
+| generate page        | --prefix | app                      |
+| generate directive   | --prefix | app                      |
+| generate moduleroute | --module | app                      |
+| serve                | --port   | 4141                     |
 
 <br>
 <br>

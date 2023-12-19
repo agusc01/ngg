@@ -4,14 +4,16 @@ ngg() {
 	local command=""
 	local default_flags=""
 	local port="4141"
+	local export=""
 
 	if [[ ! -z "$4" && "$4" != -* && "$4" != -* ]]; then
 		prefix="$4"
 	else
 		case "$2" in
-			cl|class|c|component|P|page)
+			cl|class|c|component|P|page|d|directive|p|pipe)
 				if [[ $path_name == shared* ]]; then
 					prefix="shared"
+					export="--export=true"
 				elif [[ $path_name =~ ^modules/([^/]+) ]]; then
 					prefix="${BASH_REMATCH[1]}"
 				fi
@@ -29,25 +31,25 @@ ngg() {
 
 			cl|class)
 				default_flags="--type=class"
-				command="ng generate class $(create_path $path_name "classes") $flags $default_flags"
+				command="ng generate class $(create_path $path_name "classes") $export $default_flags $flags"
 				;;
 
 			c|component)				
-				command="ng generate component $(create_path $path_name "components") --prefix=$prefix $flags $default_flags"
+				command="ng generate component $(create_path $path_name "components") --prefix=$prefix $export $default_flags $flags"
 				;;
 
 			P|page)
 				default_flags="--type=page"
-				command="ng generate component $(create_path $path_name "pages") --prefix=$prefix $flags $default_flags"
+				command="ng generate component $(create_path $path_name "pages") --prefix=$prefix $export $default_flags $flags"
 				;;
 
 			d|directive)
-				command="ng generate directive $(create_path $path_name "directives") --prefix=$prefix $flags $default_flags"
+				command="ng generate directive $(create_path $path_name "directives") --prefix=$prefix $export $default_flags $flags"
 				;;
 
 			e|num)
 				default_flags="--type=enum"
-				command="ng generate enum $(create_path $path_name "enums") $flags $default_flags"
+				command="ng generate enum $(create_path $path_name "enums") $default_flags $flags"
 				;;
 
 			en|environments)
@@ -56,17 +58,17 @@ ngg() {
 
 			g|guard)
 				default_flags="--functional=true"
-				command="ng generate guard $(create_path $path_name "guards") $flags $default_flags"			
+				command="ng generate guard $(create_path $path_name "guards") $default_flags $flags"			
 				;;
 
 			in|interceptor)
 				default_flags="--functional=true"
-				command="ng generate interceptor $(create_path $path_name "interceptors") $flags $default_flags"			
+				command="ng generate interceptor $(create_path $path_name "interceptors") $default_flags $flags"			
 				;;
 
 			i|interface)
 				default_flags="--type=interface"
-				command="ng generate interface $(create_path $path_name "interfaces") $flags $default_flags"
+				command="ng generate interface $(create_path $path_name "interfaces") $default_flags $flags"
 				;;
 
 			t|type)
@@ -82,25 +84,25 @@ ngg() {
 				;;
 
 			m|module)
-				command="ng generate module $path_name --module=$prefix $flags $default_flags"
+				command="ng generate module $path_name --module=$prefix $default_flags $flags"
 				;;
 
 			mr|moduleroute)
 				default_flags="--routing=true"
-				command="ng generate module $path_name --module=$prefix $flags $default_flags"
+				command="ng generate module $path_name --module=$prefix $default_flags $flags"
 				;;
 
 			p|pipe)
-				command="ng generate pipe $(create_path $path_name "pipes") $flags $default_flags"
+				command="ng generate pipe $(create_path $path_name "pipes") $export $default_flags $flags"
 				;;
 
 			r|resolver)
 				default_flags="--functional=true"
-				command="ng generate resolver $(create_path $path_name "resolvers") $flags $default_flags"
+				command="ng generate resolver $(create_path $path_name "resolvers") $default_flags $flags"
 				;;
 
 			s|service)
-				command="ng generate service $(create_path $path_name "services") $flags $default_flags"
+				command="ng generate service $(create_path $path_name "services") $default_flags $flags"
 				;;
 
 			*)
@@ -115,7 +117,7 @@ ngg() {
 
 		n|new)
 			default_flags="--style=scss --routing=true --ssr=false"
-			command="ng new $2 $flags $default_flags"
+			command="ng new $2 $default_flags $flags"
 			;;
 
 		*)
@@ -254,7 +256,7 @@ create_type() {
 		echo "export type $name = ${implements:-''};" > "$kebab_path"
 	
   	size=$(stat -c %s $kebab_path)
-		command="fake:ng generate type $(dirname $3)/types/$file $flags $default_flags --implements=${implements:-''}"
+		command="fake:ng generate type $(dirname $3)/types/$file $default_flags $flags --implements=${implements:-''}"
 	
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
@@ -291,7 +293,7 @@ create_const() {
 		echo "export const $name = ${implements:-''};" > "$kebab_path"
 	
   	size=$(stat -c %s $kebab_path)
-		command="fake:ng generate const $(dirname $3)/types/$file $flags $default_flags --implements=${implements:-''}"
+		command="fake:ng generate const $(dirname $3)/types/$file $default_flags $flags --implements=${implements:-''}"
 
 	
 		echo -e '\e[1;36m' # Cyan
