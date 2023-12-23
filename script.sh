@@ -5,17 +5,25 @@ ngg() {
 	local default_flags=""
 	local port="4141"
 	local export=""
+	local route=""
+	local rm=""
+	root="src/app/"
 
-	if [[ ! -z "$4" && "$4" != -* && "$4" != -* ]]; then
+	if [[ ! -z "$4" && "$4" != -* && "$4" != --* ]]; then
 		prefix="$4"
 	else
 		case "$2" in
-			cl|class|c|component|P|page|d|directive|p|pipe)
+			cl|class|c|component|P|page|d|directive|p|pipe|mr|moduleroute)
 				if [[ $path_name == shared* ]]; then
 					prefix="shared"
 					export="--export=true"
+				elif [[ $path_name == auth* ]]; then
+					route="--route=auth"
 				elif [[ $path_name =~ ^modules/([^/]+) ]]; then
-					prefix="${BASH_REMATCH[1]}"
+					if [[ $2 != 'mr' && $2 != 'moduleroute' ]]; then
+						prefix="${BASH_REMATCH[1]}"
+					fi
+					route="--route=${BASH_REMATCH[1]}"
 				fi
 			;;
 		esac
@@ -88,8 +96,15 @@ ngg() {
 				;;
 
 			mr|moduleroute)
-				default_flags="--routing=true"
+				default_flags="--routing=true $route"
 				command="ng generate module $path_name --module=$prefix $default_flags $flags"
+				show_command "$command"
+				$command
+				rm="rm -rf $root$path_name/**.component**"
+				show_command "$rm"
+				$rm
+
+				return 0;
 				;;
 
 			p|pipe)
@@ -112,7 +127,7 @@ ngg() {
 			;;
 
 		s|serve)
-			command="ng serve --port=${2:-$port} --open"
+			command="ng serve --port=${2:-$port}"
 			;;
 
 		n|new)
@@ -126,11 +141,12 @@ ngg() {
 
 	esac
 
-	echo -e '\e[1;36m' # Cyan
-	echo "[command]"
-	echo -e '\e[1;33m' # Yellow
-	echo -e "\t$command"
-	echo -e '\e[1;37m' # White
+	show_command "$command"
+	# echo -e '\e[1;36m' # Cyan
+	# echo "[command]"
+	# echo -e '\e[1;33m' # Yellow
+	# echo -e "\t$command"
+	# echo -e '\e[1;37m' # White
 	$command
 	return 0;
 }
@@ -234,7 +250,6 @@ get_flags() {
 
 create_type() {
 	local extension=".type.ts"
-	local root="src/app/"
 	local path_file="$root$3"
 	local path="$(dirname "$path_file")/types"
 	local file=$(basename "$path_file")
@@ -271,7 +286,6 @@ create_type() {
 
 create_const() {
 	local extension=".const.ts"
-	local root="src/app/"
 	local path_file="$root$3"
 	local path="$(dirname "$path_file")/constants"
 	local file=$(basename "$path_file")
@@ -295,7 +309,6 @@ create_const() {
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate const $(dirname $3)/types/$file $default_flags $flags --implements=${implements:-''}"
 
-	
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
 		echo -e '\e[1;33m' # Yellow
@@ -356,13 +369,12 @@ format_string_const() {
 	echo -e "{\n$result\n}"
 }
 
-msg_fake_command() {
+show_command() {
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
 		echo -e '\e[1;33m' # Yellow
 		echo -e "\t$1"
 		echo -e '\e[1;37m' # White
-		echo -e "\e[1;32mCREATE\e[0m \e[1m$2 ($3 bytes)\e[0m"
 }
 
 create_path() {
