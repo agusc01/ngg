@@ -268,7 +268,8 @@ create_type() {
   	fi
 	
 		mkdir -p "$path"
-		echo "export type $name = ${implements:-''};" > "$kebab_path"
+
+		echo "export type ${name^} = ${implements:-''};" > "$kebab_path"
 	
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate type $(dirname $3)/types/$file $default_flags $flags --implements=${implements:-''}"
@@ -304,10 +305,10 @@ create_const() {
   	fi
 	
 		mkdir -p "$path"
-		echo "export const $name = ${implements:-''};" > "$kebab_path"
+		echo "export const ${name^} = ${implements:-''};" > "$kebab_path"
 	
   	size=$(stat -c %s $kebab_path)
-		command="fake:ng generate const $(dirname $3)/types/$file $default_flags $flags --implements=${implements:-''}"
+		command="fake:ng generate const $(dirname $3)/const/$file $default_flags $flags --implements=${implements:-''}"
 
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
