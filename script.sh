@@ -308,7 +308,7 @@ create_const() {
 		echo "export const ${name^} = ${implements:-''};" > "$kebab_path"
 	
   	size=$(stat -c %s $kebab_path)
-		command="fake:ng generate const $(dirname $3)/const/$file $default_flags $flags --implements=${implements:-''}"
+		command="fake:ng generate const $(dirname $3)/constants/$file $default_flags $flags --implements=${implements:-''}"
 
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
