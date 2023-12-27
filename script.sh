@@ -92,8 +92,6 @@ ngg() {
 				;;
 			
 			v|validator)
-				# command="ng generate service $(create_path $path_name "validators") $default_flags $flags"
-				default_flags="--type=validator"
 				create_validator "$@"
 				return 0;
 				;;
@@ -261,6 +259,20 @@ get_flags() {
 							;;
 					esac
 					;;
+				-as)
+					case $element in
+						v|validator)
+							flags+="--implements=AsyncValidatorFn"
+							;;
+					esac
+					;;
+				-as0)
+					case $element in
+						v|validator)
+							flags+="--implements=ValidatorFn"
+							;;
+					esac
+					;;
 		esac
 
 		shift
@@ -341,48 +353,47 @@ create_const() {
 }
 
 create_validator() {
-	local extension=".service.ts"
+	local extension=".validator.ts"
+	default_flags="--type=validator"
+
+	if [[ $flags == "" ]]; then
+		extension=".service.ts"
+		default_flags="--type=service"
+	fi
+
 	local path_file="$root$3"
 	local path="$(dirname "$path_file")/validators"
 	local file=$(basename "$path_file")
 	local name=$file
 	local kebab_path="$(camel_to_kebab "$path/$file")$extension"
 	local implements=""
-	local defaultImplements="foo"
+	local data=""
 
 	# if already exists the file
 	if [ -e "$kebab_path" ]; then
 		echo -e "\n\e[1mNothing to be done\e[0m"
 	else
-
-		# check if the fourth parameters is present
-		if [ ! -z "$4" ]; then
-			implements="$4"
-  	fi
-	
 		mkdir -p "$path"
+		if [[ $flags == *"--implements=AsyncValidatorFn"* ]]; then
+			data+="import { AsyncValidatorFn } from '@angular/forms';"
+			data+="\nimport { of } from 'rxjs';"
+			data+="\n\nexport const ${name}Validator: AsyncValidatorFn = (control) => {"
+			data+="\n\treturn of(null);"
+			data+="\n};"
+		elif [[ $flags == *"--implements=ValidatorFn"* ]]; then
+			data+="import { ValidatorFn } from '@angular/forms';"
+			data+="\n\nexport const ${name}Validator: ValidatorFn = (control) => {"
+			data+="\n\treturn null;"
+			data+="\n};"
+		else
+			data+="import { Injectable } from '@angular/core';"
+			data+="\n\n@Injectable({	providedIn: 'root' })"
+			data+="\nexport class ${name^}Service {"
+			data+="\n\n}"
+		fi
 
-		echo -e "import { Injectable } from '@angular/core';
-import { FormControl, ValidationErrors } from '@angular/forms';
+		echo -e "$data" >> "$kebab_path"
 
-@Injectable({
-	providedIn: 'root',
-})
-export class ${name^}Service {
-	constructor() {}
-
-	public ${implements:-$defaultImplements}(control: FormControl): ValidationErrors | null {
-		return null;
-	}
-}" >> "$kebab_path"
-
-
-		# echo -e "import { FormControl, ValidationErrors } from '@angular/forms';\n" >> "$kebab_path"
-		# echo -e "type response = $implements$defaultImplements;\n" >> "$kebab_path"
-		# echo -e "export const ${name} = (control: FormControl): response => {" >> "$kebab_path"
-		# echo -e "\treturn null;\n}" >> "$kebab_path"
-	
-	
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate validator $(dirname $3)/validators/$file $default_flags $flags"
 	
@@ -391,7 +402,6 @@ export class ${name^}Service {
 		echo -e '\e[1;33m' # Yellow
 		echo -e "\t$command"
 		echo -e '\e[1;37m' # White
-		
 		echo -e "\e[1;32mCREATE\e[0m \e[1m$kebab_path ($size bytes)\e[0m"
 
 	fi
@@ -421,11 +431,10 @@ create_service_http() {
 		echo -e "import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
-@Injectable({
-	providedIn: 'root',
-})
+@Injectable({	providedIn: 'root' })
 export class ${name^}Service {
   constructor(private http: HttpClient) {}
+	
 }" >> "$kebab_path"
 
 	
