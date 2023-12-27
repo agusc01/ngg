@@ -7,6 +7,7 @@ ngg() {
 	local export=""
 	local route=""
 	local rm=""
+	local dont_created_msg="\n\e[1mNothing to be done\e[0m" 
 	root="src/app/"
 
 	if [[ ! -z "$4" && "$4" != -* && "$4" != --* ]]; then
@@ -152,11 +153,6 @@ ngg() {
 	esac
 
 	show_command "$command"
-	# echo -e '\e[1;36m' # Cyan
-	# echo "[command]"
-	# echo -e '\e[1;33m' # Yellow
-	# echo -e "\t$command"
-	# echo -e '\e[1;37m' # White
 	$command
 	return 0;
 }
@@ -182,97 +178,97 @@ get_flags() {
 				flag=""
 				value=""
 				;;
-				-e)
-					case $element in
-						c|component|P|page|d|directive|p|pipe)
-							flags+="--export=true "
-							;;
-					esac
+			-e)
+				case $element in
+					c|component|P|page|d|directive|p|pipe)
+						flags+="--export=true "
+						;;
+				esac
+				;;
+			-e0)
+				case $element in
+					c|component|P|page|d|directive|p|pipe)
+						flags+="--export=false "
 					;;
-				-e0)
-					case $element in
-						c|component|P|page|d|directive|p|pipe)
-							flags+="--export=false "
-							;;
-					esac
+				esac
 					;;
-				-is)
-					case $element in
-						c|component|P|page|app|application|n|new)
-							flags+="--inline-style=true "
-							;;	
-					esac
-					;;
-				-is0)
-					case $element in
-						c|component|P|page|app|application|n|new)
-							flags+="--inline-style=false "
-							;;	
-					esac
-					;;
-				-it)
-					case $element in
-						c|component|P|page|app|application|n|new)
-							flags+="--inline-template=true "
-							;;	
-					esac
-					;;
-				-it0)
-					case $element in
-						c|component|P|page|app|application|n|new)
-							flags+="--inline-template=false "
-							;;	
-					esac
-					;;
-				-st)
-					case $element in
-						app|application|c|component|P|page|d|directive|p|pipe|n|new)
-							flags+="--standalone=true "
-							;;	
-					esac
-					;;
-				-st0)
-					case $element in
-						app|application|c|component|P|page|d|directive|p|pipe|n|new)
-							flags+="--standalone=false "
-							;;	
-					esac
-					;;
-				-sk)
-					case $element in
-						app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service|n|new)
-							flags+="--skip-tests=true "
-							;;	
-					esac
-					;;
-				-sk0)
-					case $element in
-						app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service|n|new)
-							flags+="--skip-tests=false "
-							;;	
-					esac
-					;;
-				-h)
-					case $element in
-						s|service)
-							flags+="--implements=httpClient"
-							;;
-					esac
-					;;
-				-as)
-					case $element in
-						v|validator)
-							flags+="--implements=AsyncValidatorFn"
-							;;
-					esac
-					;;
-				-as0)
+			-is)
+				case $element in
+					c|component|P|page|app|application|n|new)
+						flags+="--inline-style=true "
+						;;	
+				esac
+				;;
+			-is0)
+				case $element in
+					c|component|P|page|app|application|n|new)
+						flags+="--inline-style=false "
+						;;	
+				esac
+				;;
+			-it)
+				case $element in
+					c|component|P|page|app|application|n|new)
+						flags+="--inline-template=true "
+						;;	
+				esac
+				;;
+			-it0)
+				case $element in
+					c|component|P|page|app|application|n|new)
+						flags+="--inline-template=false "
+						;;	
+				esac
+				;;
+			-st)
+				case $element in
+					app|application|c|component|P|page|d|directive|p|pipe|n|new)
+						flags+="--standalone=true "
+						;;	
+				esac
+				;;
+			-st0)
+				case $element in
+					app|application|c|component|P|page|d|directive|p|pipe|n|new)
+						flags+="--standalone=false "
+						;;	
+				esac
+				;;
+			-sk)
+				case $element in
+					app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service|n|new)
+						flags+="--skip-tests=true "
+						;;	
+				esac
+				;;
+			-sk0)
+				case $element in
+					app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service|n|new)
+						flags+="--skip-tests=false "
+						;;	
+				esac
+				;;
+			-h)
+				case $element in
+					s|service)
+						flags+="--implements=httpClient"
+						;;
+				esac
+				;;
+			-as)
+				case $element in
+					v|validator)
+						flags+="--implements=AsyncValidatorFn"
+						;;
+				esac
+				;;
+			-as0)
 					case $element in
 						v|validator)
 							flags+="--implements=ValidatorFn"
 							;;
 					esac
-					;;
+				;;
 		esac
 
 		shift
@@ -290,9 +286,8 @@ create_type() {
 
 	# if already exists the file
 	if [ -e "$kebab_path" ]; then
-		echo -e "\n\e[1mNothing to be done\e[0m"
+		echo -e	"$dont_created_msg" 
 	else
- 
 		# check if the fourth parameters is present
 		if [ ! -z "$4" ]; then
 			implements=$(format_string_type "$4")
@@ -304,15 +299,8 @@ create_type() {
 	
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate type $(dirname $3)/types/$file $default_flags $flags --implements=${implements:-''}"
-	
-		echo -e '\e[1;36m' # Cyan
-		echo "[command]"
-		echo -e '\e[1;33m' # Yellow
-		echo -e "\t$command"
-		echo -e '\e[1;37m' # White
-		
-		echo -e "\e[1;32mCREATE\e[0m \e[1m$kebab_path ($size bytes)\e[0m"
 
+		show_fake_command "$command" "$kebab_path" "$size"
 	fi
 }
 
@@ -327,9 +315,8 @@ create_const() {
 
 	# if already exists the file
 	if [ -e "$kebab_path" ]; then
-		echo -e "\n\e[1mNothing to be done\e[0m"
+		echo -e	"$dont_created_msg" 
 	else
-	
 		# check if the fourth parameters is present
 		if [ ! -z "$4" ]; then
 			implements=$(format_string_const "$4")
@@ -341,14 +328,7 @@ create_const() {
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate const $(dirname $3)/constants/$file $default_flags $flags --implements=${implements:-''}"
 
-		echo -e '\e[1;36m' # Cyan
-		echo "[command]"
-		echo -e '\e[1;33m' # Yellow
-		echo -e "\t$command"
-		echo -e '\e[1;37m' # White
-		
-		echo -e "\e[1;32mCREATE\e[0m \e[1m$kebab_path ($size bytes)\e[0m"
-
+		show_fake_command "$command" "$kebab_path" "$size"
 	fi
 }
 
@@ -371,7 +351,7 @@ create_validator() {
 
 	# if already exists the file
 	if [ -e "$kebab_path" ]; then
-		echo -e "\n\e[1mNothing to be done\e[0m"
+		echo -e	"$dont_created_msg" 
 	else
 		mkdir -p "$path"
 		if [[ $flags == *"--implements=AsyncValidatorFn"* ]]; then
@@ -398,13 +378,7 @@ create_validator() {
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate validator $(dirname $3)/validators/$file $default_flags $flags"
 	
-		echo -e '\e[1;36m' # Cyan
-		echo "[command]"
-		echo -e '\e[1;33m' # Yellow
-		echo -e "\t$command"
-		echo -e '\e[1;37m' # White
-		echo -e "\e[1;32mCREATE\e[0m \e[1m$kebab_path ($size bytes)\e[0m"
-
+		show_fake_command "$command" "$kebab_path" "$size"
 	fi
 }
 
@@ -420,9 +394,8 @@ create_service_http() {
 
 	# if already exists the file
 	if [ -e "$kebab_path" ]; then
-		echo -e "\n\e[1mNothing to be done\e[0m"
+		echo -e	"$dont_created_msg" 
 	else
-
 		# check if the fourth parameters is present
 		if [ ! -z "$4" ]; then
 			implements="$4"
@@ -442,14 +415,7 @@ create_service_http() {
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate service $(dirname $3)/services/$file $default_flags $flags"
 	
-		echo -e '\e[1;36m' # Cyan
-		echo "[command]"
-		echo -e '\e[1;33m' # Yellow
-		echo -e "\t$command"
-		echo -e '\e[1;37m' # White
-		
-		echo -e "\e[1;32mCREATE\e[0m \e[1m$kebab_path ($size bytes)\e[0m"
-
+		show_fake_command "$command" "$kebab_path" "$size"
 	fi
 }
 
@@ -466,18 +432,18 @@ to_upper_first_leter_case() {
 }
 
 format_string_type() {
-    echo "$1" | awk -F',' '{
-        for(i=1;i<=NF;i++) {
-            value = $i;
+	echo "$1" | awk -F',' '{
+		for(i=1;i<=NF;i++) {
+			value = $i;
 
-            # Verificar si el valor es un número (entero o flotante)
-            if (value ~ /^[+-]?([0-9]*[.])?[0-9]+$/) {
-                printf("%s | ", value);
-            } else {
-                printf("\x27%s\x27 | ", value);
-            }
-        }
-    }' | sed 's/ | $//'
+			# Check if a number ( int or float )
+			if (value ~ /^[+-]?([0-9]*[.])?[0-9]+$/) {
+				printf("%s | ", value);
+			} else {
+				printf("\x27%s\x27 | ", value);
+			}
+		}
+	}' | sed 's/ | $//'
 }
 
 format_string_const() {
@@ -489,11 +455,11 @@ format_string_const() {
 			key = toupper(partes[1]);
 			value = partes[2];
 			
-			# Verificar si el valor es un número
+			# Check if a number ( int or float )
 			if (value ~ /^[+-]?([0-9]*[.])?[0-9]+$/) {
 				printf "\t%s: %s%s\n", key, value, (i==NF)?"":", ";
 			} else {
-					printf "\t%s: \x27%s\x27%s\n", key, value, (i==NF)?"":", ";
+				printf "\t%s: \x27%s\x27%s\n", key, value, (i==NF)?"":", ";
 			}
 		}
 		print "";
@@ -503,11 +469,16 @@ format_string_const() {
 }
 
 show_command() {
-		echo -e '\e[1;36m' # Cyan
-		echo "[command]"
-		echo -e '\e[1;33m' # Yellow
-		echo -e "\t$1"
-		echo -e '\e[1;37m' # White
+	echo -e '\e[1;36m' # Cyan
+	echo "[command]"
+	echo -e '\e[1;33m' # Yellow
+	echo -e "\t$1"
+	echo -e '\e[1;37m' # White
+}
+
+show_fake_command() {
+	show_command "$1"
+	echo -e "\e[1;32mCREATE\e[0m \e[1m$2 ($3 bytes)\e[0m"
 }
 
 create_path() {
