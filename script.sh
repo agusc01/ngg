@@ -92,6 +92,7 @@ ngg() {
 				;;
 			
 			v|validator)
+				# command="ng generate service $(create_path $path_name "validators") $default_flags $flags"
 				default_flags="--type=validator"
 				create_validator "$@"
 				return 0;
@@ -328,14 +329,14 @@ create_const() {
 }
 
 create_validator() {
-	local extension=".validator.ts"
+	local extension=".service.ts"
 	local path_file="$root$3"
 	local path="$(dirname "$path_file")/validators"
 	local file=$(basename "$path_file")
 	local name=$file
 	local kebab_path="$(camel_to_kebab "$path/$file")$extension"
 	local implements=""
-	local defaultImplements="ValidationErrors | null"
+	local defaultImplements="foo"
 
 	# if already exists the file
 	if [ -e "$kebab_path" ]; then
@@ -344,15 +345,30 @@ create_validator() {
 
 		# check if the fourth parameters is present
 		if [ ! -z "$4" ]; then
-			implements="$4 | "
+			implements="$4"
   	fi
 	
 		mkdir -p "$path"
 
-		echo -e "import { FormControl, ValidationErrors } from '@angular/forms';\n" > "$kebab_path"
-		echo -e "type response = $implements$defaultImplements;\n" >> "$kebab_path"
-		echo -e "export const ${name} = (control: FormControl): response => {" >> "$kebab_path"
-		echo -e "\treturn null;\n}" >> "$kebab_path"
+		echo -e "import { Injectable } from '@angular/core';
+import { FormControl, ValidationErrors } from '@angular/forms';
+
+@Injectable({
+	providedIn: 'root',
+})
+export class ${name^}Service {
+	constructor() {}
+
+	public ${implements:-$defaultImplements}(control: FormControl): ValidationErrors | null {
+		return null;
+	}
+}" >> "$kebab_path"
+
+
+		# echo -e "import { FormControl, ValidationErrors } from '@angular/forms';\n" >> "$kebab_path"
+		# echo -e "type response = $implements$defaultImplements;\n" >> "$kebab_path"
+		# echo -e "export const ${name} = (control: FormControl): response => {" >> "$kebab_path"
+		# echo -e "\treturn null;\n}" >> "$kebab_path"
 	
 	
   	size=$(stat -c %s $kebab_path)
