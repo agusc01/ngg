@@ -124,6 +124,11 @@ ngg() {
 				;;
 
 			s|service)
+				if [[ $flags == *"--implements=httpClient"* ]]; then
+					flags=$(echo "$flags" | sed 's/-h/--implements=httpCliente/g')
+					create_service_http "$@"
+					return 0;
+				fi
 				command="ng generate service $(create_path $path_name "services") $default_flags $flags"
 				;;
 
@@ -247,6 +252,13 @@ get_flags() {
 						app|application|cl|class|c|component|P|page|d|directive|g|guard|in|interceptor|p|pipe|r|resolver|s|service|n|new)
 							flags+="--skip-tests=false "
 							;;	
+					esac
+					;;
+				-h)
+					case $element in
+						s|service)
+							flags+="--implements=httpClient"
+							;;
 					esac
 					;;
 		esac
@@ -373,6 +385,52 @@ export class ${name^}Service {
 	
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate validator $(dirname $3)/validators/$file $default_flags $flags"
+	
+		echo -e '\e[1;36m' # Cyan
+		echo "[command]"
+		echo -e '\e[1;33m' # Yellow
+		echo -e "\t$command"
+		echo -e '\e[1;37m' # White
+		
+		echo -e "\e[1;32mCREATE\e[0m \e[1m$kebab_path ($size bytes)\e[0m"
+
+	fi
+}
+
+create_service_http() {
+	local extension=".service.ts"
+	local path_file="$root$3"
+	local path="$(dirname "$path_file")/services"
+	local file=$(basename "$path_file")
+	local name=$file
+	local kebab_path="$(camel_to_kebab "$path/$file")$extension"
+	local implements=""
+
+	# if already exists the file
+	if [ -e "$kebab_path" ]; then
+		echo -e "\n\e[1mNothing to be done\e[0m"
+	else
+
+		# check if the fourth parameters is present
+		if [ ! -z "$4" ]; then
+			implements="$4"
+  	fi
+	
+		mkdir -p "$path"
+
+		echo -e "import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+
+@Injectable({
+	providedIn: 'root',
+})
+export class ${name^}Service {
+  constructor(private http: HttpClient) {}
+}" >> "$kebab_path"
+
+	
+  	size=$(stat -c %s $kebab_path)
+		command="fake:ng generate service $(dirname $3)/services/$file $default_flags $flags"
 	
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
