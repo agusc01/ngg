@@ -90,6 +90,12 @@ ngg() {
 				create_const "$@"
 				return 0;
 				;;
+			
+			v|validator)
+				default_flags="--type=validator"
+				create_validator "$@"
+				return 0;
+				;;
 
 			m|module)
 				command="ng generate module $path_name --module=$prefix $default_flags $flags"
@@ -310,6 +316,48 @@ create_const() {
   	size=$(stat -c %s $kebab_path)
 		command="fake:ng generate const $(dirname $3)/constants/$file $default_flags $flags --implements=${implements:-''}"
 
+		echo -e '\e[1;36m' # Cyan
+		echo "[command]"
+		echo -e '\e[1;33m' # Yellow
+		echo -e "\t$command"
+		echo -e '\e[1;37m' # White
+		
+		echo -e "\e[1;32mCREATE\e[0m \e[1m$kebab_path ($size bytes)\e[0m"
+
+	fi
+}
+
+create_validator() {
+	local extension=".validator.ts"
+	local path_file="$root$3"
+	local path="$(dirname "$path_file")/validators"
+	local file=$(basename "$path_file")
+	local name=$file
+	local kebab_path="$(camel_to_kebab "$path/$file")$extension"
+	local implements=""
+	local defaultImplements="ValidationErrors | null"
+
+	# if already exists the file
+	if [ -e "$kebab_path" ]; then
+		echo -e "\n\e[1mNothing to be done\e[0m"
+	else
+
+		# check if the fourth parameters is present
+		if [ ! -z "$4" ]; then
+			implements="$4 | "
+  	fi
+	
+		mkdir -p "$path"
+
+		echo -e "import { FormControl, ValidationErrors } from '@angular/forms';\n" > "$kebab_path"
+		echo -e "type response = $implements$defaultImplements;\n" >> "$kebab_path"
+		echo -e "export const ${name} = (control: FormControl): response => {" >> "$kebab_path"
+		echo -e "\treturn null;\n}" >> "$kebab_path"
+	
+	
+  	size=$(stat -c %s $kebab_path)
+		command="fake:ng generate validator $(dirname $3)/validators/$file $default_flags $flags"
+	
 		echo -e '\e[1;36m' # Cyan
 		echo "[command]"
 		echo -e '\e[1;33m' # Yellow
