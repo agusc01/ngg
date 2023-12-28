@@ -40,16 +40,20 @@ _enjoy!_
 | g <br> generate | in <br> interceptor  | [name] |                                                                          | --functional=true                                 | native | -sk <br> -sk0                                                                      |
 | g <br> generate | i <br> interface     | [name] |                                                                          | --type=interface                                  | native |                                                                                    |
 | g <br> generate | t <br> type          | [name] | --implements='s1,s2,...,sn' [s : string \| number]                       | --type=type                                       | fake   |                                                                                    |
-| g <br> generate | co <br> const        | [name] | --implements='p1:v1,p2:v2,...,pn:vn:' [p : string & v: string \| number] | --type=type                                       | fake   |                                                                                    |
+| g <br> generate | co <br> const        | [name] | --implements='p1:v1,p2:v2,...,pn:vn:' [p : string & v: string \| number] | --type=const                                      | fake   |                                                                                    |
+| g <br> generate | v <br> validator     | [name] |                                                                          | --type=validator or --type=service                | fake   | -as <br> -as0                                                                      |
 | g <br> generate | m <br> module        | [name] |                                                                          |                                                   | native |                                                                                    |
 | g <br> generate | mr <br> moduleroute  | [name] | **--module=$4**                                                          | --routing=true                                    | native |                                                                                    |
 | g <br> generate | p <br> pipe          | [name] |                                                                          |                                                   | native | -e <br> -st <br> -sk <br> -e0 <br> -st0 <br> -sk0                                  |
 | g <br> generate | r <br> resolver      | [name] |                                                                          | --functional=true                                 | native | -sk <br> -sk0                                                                      |
 | g <br> generate | s <br> service       | [name] |                                                                          |                                                   | native | -sk <br> -sk0                                                                      |
+| g <br> generate | s <br> service       | [name] |                                                                          |                                                   | fake   | -h                                                                                 |
 | s <br> serve    | **--port=$2**        |        |                                                                          | --open                                            | native |                                                                                    |
 | n <br> new      | [name]               |        |                                                                          | --style=scss <br> --routing=true <br> --ssr=false | native | -is <br> -it <br> -st <br> -sk <br> -is0 <br> -it0 <br> -st0 <br> -sk0             |
 
-> [name] is a string
+> note: [name] is a string
+
+> note: "**_ngg g s [name] -h_**" is fake:ng and for now it doesn't work --flat, --project or --skip-test (-sk or -sk0)
 
 <br>
 <br>
@@ -67,18 +71,21 @@ _enjoy!_
 <br>
 <br>
 
-| flag alias | angular flag            |
-| ---------- | ----------------------- |
-| -e         | --export=true           |
-| -is        | --inline-style=true     |
-| -it        | --inline-template=true  |
-| -st        | --standalone=true       |
-| -sk        | --sk=true               |
-| -e0        | --export=false          |
-| -is0       | --inline-style=false    |
-| -it0       | --inline-template=false |
-| -st0       | --standalone=false      |
-| -sk0       | --sk=false              |
+| flag alias | angular flag            | extra info                    |
+| ---------- | ----------------------- | ----------------------------- |
+| -e         | --export=true           |                               |
+| -is        | --inline-style=true     |                               |
+| -it        | --inline-template=true  |                               |
+| -st        | --standalone=true       |                               |
+| -sk        | --sk=true               |                               |
+| -as        | **_doesn't exist_**     | --implements=AsyncValidatorFn |
+| -h         | **_doesn't exist_**     | --implements=httpClient       |
+| -e0        | --export=false          |                               |
+| -is0       | --inline-style=false    |                               |
+| -it0       | --inline-template=false |                               |
+| -st0       | --standalone=false      |                               |
+| -sk0       | --sk=false              |                               |
+| -as0       | **_doesn't exist_**     | --implements=ValidatorFn      |
 
 <br>
 <br>
@@ -117,9 +124,15 @@ ngg g t shared/otherType "yes,no,may be,8,8.1,8.1.1"
 
 ngg g co shared/userHuman "name:john,lastName:DOE,age:27,height:1.88"
 
+ngg g v shared/custom -as
+
 ngg g p shared/dni -e
 
 ngg g r data -sk0
 
 ngg g s user -sk
+
+ngg g s userHttp -h
 ```
+
+> note: "**_ngg g s [name] -h_**" is fake:ng and for now it doesn't work --flat, --project or --skip-test (-sk or -sk0)
