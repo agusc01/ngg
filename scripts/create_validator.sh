@@ -1,10 +1,10 @@
 create_validator() {
 	local extension=".validator.ts"
-	default_flags="--type=validator"
+	default_flags="--type=validator --functional=true"
 
 	if [[ $flags == "" ]]; then
 		extension=".service.ts"
-		default_flags="--type=service"
+		default_flags="--type=service --functional=false"
 	fi
 
 	local path_file="$root$3"
